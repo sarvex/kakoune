@@ -36,7 +36,7 @@ class ArrayView:
 
     def to_string(self):
         type = self.val.type.template_argument(0).unqualified().strip_typedefs()
-        return "ArrayView<%s>" % (type)
+        return f"ArrayView<{type}>"
 
 
 class LineAndColumn:
@@ -47,8 +47,7 @@ class LineAndColumn:
 
     def to_string(self):
         value_type = self.val.type.unqualified()
-        return "%s(%s, %s)" % (value_type, self.val['line'],
-                               self.val['column'])
+        return f"{value_type}({self.val['line']}, {self.val['column']})"
 
 
 class BufferCoordAndTarget:
@@ -59,8 +58,7 @@ class BufferCoordAndTarget:
 
     def to_string(self):
         value_type = self.val.type.unqualified()
-        return "%s(%s, %s, %s)" % (value_type, self.val['line'],
-                                   self.val['column'], self.val['target'])
+        return f"{value_type}({self.val['line']}, {self.val['column']}, {self.val['target']})"
 
 
 class BufferIterator:
@@ -72,11 +70,10 @@ class BufferIterator:
     def to_string(self):
         line = self.val['m_coord']['line']
         column = self.val['m_coord']['column']
-        if self.val['m_buffer']['m_ptr'] != 0:
-            buf = self.val['m_buffer']['m_ptr'].dereference()['m_name']
-            return "buffer<%s>@(%s, %s)" % (buf, line, column)
-        else:
-            return "buffer<none>@(%s, %s)" % (line, column)
+        if self.val['m_buffer']['m_ptr'] == 0:
+            return f"buffer<none>@({line}, {column})"
+        buf = self.val['m_buffer']['m_ptr'].dereference()['m_name']
+        return f"buffer<{buf}>@({line}, {column})"
 
 
 class String:
@@ -204,7 +201,7 @@ class Regex:
         self.val = val
 
     def to_string(self):
-        return "regex%s" % (self.val["m_str"])
+        return f'regex{self.val["m_str"]}'
 
 
 def build_pretty_printer():
